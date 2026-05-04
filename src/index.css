@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-border;
+  }
+  body {
+    @apply bg-surface text-white font-sans antialiased;
+    scrollbar-width: thin;
+    scrollbar-color: #21262d #0d1117;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d1117;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-card rounded-xl border border-surface-border;
+  }
+  .badge-bull {
+    @apply bg-bull/10 text-bull text-xs font-mono px-2 py-0.5 rounded-md;
+  }
+  .badge-bear {
+    @apply bg-bear/10 text-bear text-xs font-mono px-2 py-0.5 rounded-md;
+  }
+  .badge-neutral {
+    @apply bg-white/5 text-muted text-xs font-mono px-2 py-0.5 rounded-md;
+  }
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-hover transition-all duration-200 cursor-pointer text-sm font-medium;
+  }
+  .nav-item.active {
+    @apply text-accent bg-accent/10;
+  }
+  .btn-primary {
+    @apply bg-accent text-black font-semibold px-4 py-2 rounded-lg hover:bg-accent-hover transition-colors duration-200 text-sm;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-muted border border-surface-border px-4 py-2 rounded-lg hover:text-white hover:border-white/30 transition-all duration-200 text-sm;
+  }
+  .input-dark {
+    @apply bg-surface-hover border border-surface-border rounded-lg px-3 py-2 text-sm text-white placeholder-muted focus:outline-none focus:border-accent/50 transition-colors;
+  }
+  .ticker-strip {
+    @apply flex gap-8 animate-ticker whitespace-nowrap;
+  }
+  .heatmap-cell {
+    @apply rounded-lg flex items-center justify-center text-xs font-bold transition-transform hover:scale-105 cursor-pointer;
+  }
+  .stat-card {
+    @apply card p-5 flex flex-col gap-1 hover:border-accent/30 transition-colors duration-200;
+  }
+}
+
+/* Glow effects */
+.glow-bull {
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+}
+.glow-bear {
+  box-shadow: 0 0 20px rgba(255, 77, 109, 0.15);
+}
+.text-glow-accent {
+  text-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+}
+
+/* Chart gradient fills */
+.chart-fill-bull {
+  fill: url(#bullGradient);
+}
+.chart-fill-bear {
+  fill: url(#bearGradient);
+}
