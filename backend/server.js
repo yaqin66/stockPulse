@@ -7,7 +7,8 @@ const yahooFinance = new YahooFinance()
 const app = express()
 const PORT = 3001
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] }))
+// Mengizinkan semua origin agar bisa diakses dari IP Publik/Domain Linux VPS
+app.use(cors())
 app.use(express.json())
 
 // ─────────────────────────────────────────────────────────────────────────────
