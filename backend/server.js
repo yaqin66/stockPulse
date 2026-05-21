@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const puppeteer = require('puppeteer')
+const YahooFinance = require('yahoo-finance2').default
+const yahooFinance = new YahooFinance()
 
 const app = express()
 const PORT = 3001
@@ -291,6 +293,177 @@ app.get('/api/chart/:ticker/:period', async (req, res) => {
   const key = `chart:${ticker.toUpperCase()}:${period.toUpperCase()}`
   await cachedFetch(key, 'chart', url, res)
 })
+
+// ─────────────────────────────────────────────────────────────────────────────
+app.get('/api/yf-price/:ticker', async (req, res) => {
+  const rawTicker = req.params.ticker.replace('.JK', '').toUpperCase();
+  const url = `https://www.idx.co.id/primary/ListedCompany/GetTradingInfoDaily?code=${rawTicker}`;
+  const key = `yf-price:${rawTicker}`;
+  
+  try {
+    console.log(`\n[IDX Scraping] 🔍 Meminta harga real-time untuk saham: ${rawTicker}...`);
+    
+    const data = await fetchIDXJson(url);
+    if (!data || data.ClosingPrice == null) {
+      console.warn(`[IDX Scraping] ⚠️ Data tidak ditemukan untuk ${rawTicker}`);
+      return fail(res, `Data tidak ditemukan untuk ${rawTicker} di IDX`);
+    }
+
+    // data adalah object (seperti di TradingInfoDaily)
+    const latest = data;
+    console.log(`[IDX Scraping] ✅ Sukses ambil harga ${rawTicker}: Rp ${latest.ClosingPrice}`);
+    
+    // Format JSON agar sesuai dengan yang diharapkan frontend YfPricePage
+    const mappedData = {
+      ticker: latest.SecurityCode || rawTicker,
+      name: latest.SecurityCode || rawTicker, 
+      price: latest.ClosingPrice,
+      change: latest.Change,
+      changePct: latest.PreviousPrice ? (latest.Change / latest.PreviousPrice) * 100 : 0,
+      volume: latest.TradedVolume,
+      marketCap: '-', // Tidak tersedia
+      pe: null,
+      high: latest.HighestPrice,
+      low: latest.LowestPrice,
+      open: latest.OpeningPrice,
+      prevClose: latest.PreviousPrice
+    };
+
+    return res.json({ success: true, data: mappedData, source: 'IDX Scraping' });
+  } catch (error) {
+    console.error(`[IDX Scraping] ❌ Error untuk ${rawTicker}:`, error.message);
+    return fail(res, `Gagal scrape IDX: ${error.message}`);
+  }
+});
+
+app.get('/api/market-summary', async (req, res) => {
+  const cached = cacheGet('market-summary')
+  if (cached) {
+    console.log('[cache HIT] market-summary')
+    return ok(res, cached)
+  }
+
+  try {
+    console.log('\n[IDX] 📊 Mengambil Market Summary...')
+
+    // 1. IHSG dari Yahoo Finance (^JKSE)
+    let indices = []
+    try {
+      const jkse = await yahooFinance.quote('^JKSE')
+      indices.push({
+        name: 'COMPOSITE',
+        value: jkse.regularMarketPrice,
+        prevValue: jkse.regularMarketPreviousClose,
+        high: jkse.regularMarketDayHigh,
+        low: jkse.regularMarketDayLow,
+        change: jkse.regularMarketChange,
+        changePct: jkse.regularMarketChangePercent,
+        updatedAt: new Date(jkse.regularMarketTime).toISOString(),
+      })
+    } catch (e) {
+      console.warn('[IDX] ⚠️ Gagal ambil IHSG dari YF:', e.message)
+    }
+
+    // 1b. Indeks Tambahan dari endpoint constituent IDX
+    const constituentUrl = 'https://www.idx.co.id/primary/StockData/GetConstituent'
+    const PRIORITY_INDICES = ['LQ45', 'IDX30', 'BISNIS-27', 'IDXHIDIV20', 'JII']
+    try {
+      const raw = await fetchIDXJson(constituentUrl)
+      const items = raw?.Items || []
+      
+      const priorityMap = items.reduce((acc, idx) => {
+        acc[idx.IndexCode] = idx
+        return acc
+      }, {})
+
+      PRIORITY_INDICES
+        .filter(code => priorityMap[code])
+        .forEach(code => {
+          const idx = priorityMap[code]
+          indices.push({
+            name: idx.IndexCode,
+            value: idx.LastVal,
+            prevValue: idx.PrevVal,
+            high: idx.HighVal,
+            low: idx.LowVal,
+            change: idx.ChgVal,
+            changePct: idx.ChgPct,
+            updatedAt: idx.DtCreate,
+          })
+        })
+
+      console.log(`[IDX] ✅ Indeks berhasil dimuat: ${indices.map(i => i.name).join(', ')}`)
+    } catch (e) {
+      console.warn('[IDX] ⚠️ Gagal ambil indeks constituent:', e.message)
+    }
+
+    // 2 & 3. Top Gainers & Top Losers dari GetStockSummary (Semua Saham)
+    let topGainers = []
+    let topLosers = []
+    const summaryUrl = 'https://www.idx.co.id/primary/TradingSummary/GetStockSummary?length=9999&start=0'
+    try {
+      const summaryRaw = await fetchIDXJson(summaryUrl)
+      let allStocks = summaryRaw?.data || []
+      
+      // Filter saham yang aktif diperdagangkan hari ini (ada volume & previous price valid)
+      allStocks = allStocks.filter(s => s.Volume > 0 && s.Previous > 0)
+      
+      const mappedStocks = allStocks.map(s => {
+        const changePct = (s.Change / s.Previous) * 100
+        return {
+          ticker: s.StockCode,
+          name: s.StockName || '',
+          price: s.Close,
+          change: s.Change,
+          changePct: changePct,
+          volume: s.Volume,
+        }
+      })
+
+      // Sort untuk Gainers (Persentase tertinggi)
+      topGainers = [...mappedStocks]
+        .filter(s => s.changePct > 0)
+        .sort((a, b) => b.changePct - a.changePct)
+        .slice(0, 10)
+
+      // Sort untuk Losers (Persentase terendah/minus terdalam)
+      topLosers = [...mappedStocks]
+        .filter(s => s.changePct < 0)
+        .sort((a, b) => a.changePct - b.changePct) // minus paling besar (paling kecil nilainya) di atas
+        .slice(0, 10)
+
+    } catch (e) {
+      console.warn('[IDX] ⚠️ Gagal ambil all stock summary:', e.message)
+    }
+
+    // 4. IHSG Historical chart (1 bulan) dari Yahoo Finance
+    let ihsgChart = []
+    try {
+      const period1 = new Date();
+      period1.setMonth(period1.getMonth() - 1);
+      const period2 = new Date();
+      const history = await yahooFinance.historical('^JKSE', { period1, period2, interval: '1d' });
+      ihsgChart = history.map(d => ({
+        date: d.date.toISOString().split('T')[0],
+        value: d.close,
+      }))
+    } catch (e) {
+      console.warn('[IDX] ⚠️ Gagal ambil chart IHSG dari YF:', e.message)
+    }
+
+    const summary = { indices, topGainers, topLosers, ihsgChart }
+    cacheSet('market-summary', summary, 2 * 60 * 1000) // cache 2 menit
+    console.log(`[IDX] ✅ Market Summary: ${indices.length} indeks, ${topGainers.length} gainers, ${topLosers.length} losers`)
+    return ok(res, summary)
+  } catch (error) {
+    console.error('[IDX] ❌ Error market-summary:', error.message)
+    return fail(res, error.message)
+  }
+})
+
+app.get('/api/screener', async (req, res) => {
+  res.json({ success: true, data: [] });
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Health check

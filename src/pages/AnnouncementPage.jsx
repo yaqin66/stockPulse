@@ -165,7 +165,7 @@ export default function AnnouncementPage() {
       {/* ── Header & Filter ─────────────────────────────────────────────────── */}
       <div className="card p-5">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <h2 className="text-white font-semibold flex items-center gap-2 text-lg">
+          <h2 className="text-content font-semibold flex items-center gap-2 text-lg">
             <Megaphone size={18} className="text-accent" /> Pengumuman Emiten
           </h2>
           {useMock && (
@@ -203,7 +203,7 @@ export default function AnnouncementPage() {
                   key={t}
                   onClick={() => { setTickerInput(t); setTicker(t); setPage(0) }}
                   className={clsx('text-xs px-2 py-1 rounded-md font-mono transition-colors',
-                    ticker === t ? 'bg-accent text-black font-bold' : 'bg-surface-hover text-muted hover:text-white'
+                    ticker === t ? 'bg-accent text-white font-bold' : 'bg-surface-hover text-content-muted hover:text-content'
                   )}
                 >
                   {t}
@@ -214,15 +214,15 @@ export default function AnnouncementPage() {
 
           {/* Date range */}
           <div className="flex items-center gap-2">
-            <Calendar size={13} className="text-muted" />
+            <Calendar size={13} className="text-content-muted" />
             <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="input-dark text-xs" />
-            <span className="text-muted text-xs">s/d</span>
+            <span className="text-content-muted text-xs">s/d</span>
             <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="input-dark text-xs" />
           </div>
 
           {/* Keyword */}
           <div className="relative flex-1 min-w-40">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-content-muted" />
             <input
               type="text"
               value={keyword}
@@ -241,8 +241,8 @@ export default function AnnouncementPage() {
 
       {/* ── Stat bar ────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-1">
-        <p className="text-muted text-xs">
-          Total pengumuman: <span className="text-white font-mono font-bold">{total}</span>
+        <p className="text-content-muted text-xs">
+          Total pengumuman: <span className="text-content font-mono font-bold">{total}</span>
           {' '}· Halaman <span className="text-accent font-mono">{page + 1}</span> dari {totalPages || 1}
         </p>
         <div className="flex gap-1">
@@ -265,7 +265,7 @@ export default function AnnouncementPage() {
 
       {/* ── Loading ──────────────────────────────────────────────────────────── */}
       {loading && (
-        <div className="card p-10 flex items-center justify-center gap-3 text-muted">
+        <div className="card p-10 flex items-center justify-center gap-3 text-content-muted">
           <RefreshCw size={18} className="animate-spin text-accent" />
           <span className="text-sm">Mengambil data pengumuman...</span>
         </div>
@@ -274,9 +274,9 @@ export default function AnnouncementPage() {
       {/* ── List Pengumuman ─────────────────────────────────────────────────── */}
       {!loading && replies.length === 0 && (
         <div className="card p-10 flex flex-col items-center gap-3 text-center">
-          <Megaphone size={36} className="text-muted" />
-          <p className="text-white font-medium">Tidak Ada Pengumuman</p>
-          <p className="text-muted text-sm">Coba ubah rentang tanggal atau kata kunci pencarian</p>
+          <Megaphone size={36} className="text-content-muted" />
+          <p className="text-content font-medium">Tidak Ada Pengumuman</p>
+          <p className="text-content-muted text-sm">Coba ubah rentang tanggal atau kata kunci pencarian</p>
         </div>
       )}
 
@@ -308,13 +308,13 @@ export default function AnnouncementPage() {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <span className="text-muted text-xs font-mono">{p.NoPengumuman}</span>
+                  <span className="text-content-muted text-xs font-mono">{p.NoPengumuman}</span>
                   {efekBadges(p).map(b => (
                     <span key={b.label} className={clsx('text-[10px] px-1.5 py-0.5 rounded font-medium', b.cls)}>{b.label}</span>
                   ))}
                 </div>
-                <p className="text-white font-medium text-sm leading-snug line-clamp-2">{p.JudulPengumuman}</p>
-                <p className="text-muted text-xs mt-1 flex items-center gap-1.5">
+                <p className="text-content font-medium text-sm leading-snug line-clamp-2">{p.JudulPengumuman}</p>
+                <p className="text-content-muted text-xs mt-1 flex items-center gap-1.5">
                   <Calendar size={10} />
                   {fmtDate(p.TglPengumuman)}
                   {atts.length > 0 && (
@@ -330,7 +330,7 @@ export default function AnnouncementPage() {
               {/* Chevron */}
               <ChevronDown
                 size={16}
-                className={clsx('text-muted flex-shrink-0 mt-1 transition-transform duration-200', isOpen && 'rotate-180')}
+                className={clsx('text-content-muted flex-shrink-0 mt-1 transition-transform duration-200', isOpen && 'rotate-180')}
               />
             </button>
 
@@ -339,14 +339,14 @@ export default function AnnouncementPage() {
               <div className="px-5 pb-5 border-t border-surface-border bg-surface-hover/30 animate-fade-in">
                 {/* Detail text */}
                 <div className="pt-4 pb-3">
-                  <p className="text-muted text-xs font-medium mb-1">Perihal</p>
-                  <p className="text-white text-sm">{p.PerihalPengumuman || p.JudulPengumuman}</p>
+                  <p className="text-content-muted text-xs font-medium mb-1">Perihal</p>
+                  <p className="text-content text-sm">{p.PerihalPengumuman || p.JudulPengumuman}</p>
                 </div>
 
                 {/* Dokumen utama */}
                 {mainDoc && (
                   <div className="mb-3">
-                    <p className="text-muted text-xs font-medium mb-2">Dokumen Utama</p>
+                    <p className="text-content-muted text-xs font-medium mb-2">Dokumen Utama</p>
                     <a
                       href={pdfUrl(mainDoc.FullSavePath)}
                       target="_blank"
@@ -363,7 +363,7 @@ export default function AnnouncementPage() {
                 {/* Lampiran */}
                 {lampiran.length > 0 && (
                   <div>
-                    <p className="text-muted text-xs font-medium mb-2">Lampiran ({lampiran.length})</p>
+                    <p className="text-content-muted text-xs font-medium mb-2">Lampiran ({lampiran.length})</p>
                     <div className="flex flex-wrap gap-2">
                       {lampiran.map((l, li) => (
                         <a
@@ -371,7 +371,7 @@ export default function AnnouncementPage() {
                           href={pdfUrl(l.FullSavePath)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-muted text-xs hover:text-white hover:border-white/20 transition-colors"
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-content-muted text-xs hover:text-content hover:border-white/20 transition-colors"
                         >
                           <Paperclip size={11} />
                           <span className="truncate max-w-[200px]">{l.OriginalFilename}</span>
@@ -405,7 +405,7 @@ export default function AnnouncementPage() {
                   key={pg}
                   onClick={() => setPage(pg)}
                   className={clsx('w-8 h-8 rounded-lg text-xs font-mono transition-colors',
-                    pg === page ? 'bg-accent text-black font-bold' : 'text-muted hover:text-white hover:bg-surface-hover'
+                    pg === page ? 'bg-accent text-white font-bold' : 'text-content-muted hover:text-content hover:bg-surface-hover'
                   )}
                 >
                   {pg + 1}

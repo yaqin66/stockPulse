@@ -46,15 +46,15 @@ const CustomCandleTooltip = ({ active, payload, label }) => {
   const bull = d.close >= d.open
   return (
     <div className="bg-surface-card border border-surface-border rounded-lg p-3 text-xs font-mono space-y-1">
-      <p className="text-muted">{d.date}</p>
+      <p className="text-content-muted">{d.date}</p>
       <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
-        <span className="text-muted">Open</span><span className="text-white">{fmt(d.open)}</span>
-        <span className="text-muted">High</span><span className="text-bull">{fmt(d.high)}</span>
-        <span className="text-muted">Low</span><span className="text-bear">{fmt(d.low)}</span>
-        <span className="text-muted">Close</span>
+        <span className="text-content-muted">Open</span><span className="text-content">{fmt(d.open)}</span>
+        <span className="text-content-muted">High</span><span className="text-bull">{fmt(d.high)}</span>
+        <span className="text-content-muted">Low</span><span className="text-bear">{fmt(d.low)}</span>
+        <span className="text-content-muted">Close</span>
         <span className={bull ? 'text-bull' : 'text-bear'}>{fmt(d.close)}</span>
-        <span className="text-muted">Volume</span>
-        <span className="text-white">{(d.volume / 1_000_000).toFixed(1)}M</span>
+        <span className="text-content-muted">Volume</span>
+        <span className="text-content">{(d.volume / 1_000_000).toFixed(1)}M</span>
       </div>
     </div>
   )
@@ -156,7 +156,7 @@ export default function ChartPage() {
         <div className="relative">
           <button
             onClick={() => setShowTickerDropdown(!showTickerDropdown)}
-            className="flex items-center gap-2 bg-surface-hover border border-surface-border rounded-lg px-3 py-1.5 text-white font-mono font-bold hover:border-accent/50 transition-colors"
+            className="flex items-center gap-2 bg-surface-hover border border-surface-border rounded-lg px-3 py-1.5 text-content font-mono font-bold hover:border-accent/50 transition-colors"
           >
             {selectedTicker} <ChevronDown size={14} />
           </button>
@@ -167,7 +167,7 @@ export default function ChartPage() {
                   key={t}
                   onClick={() => { setSelectedTicker(t); setShowTickerDropdown(false) }}
                   className={clsx('w-full text-left px-3 py-2 text-sm font-mono hover:bg-surface-hover transition-colors',
-                    t === selectedTicker ? 'text-accent' : 'text-white')}
+                    t === selectedTicker ? 'text-accent' : 'text-content')}
                 >
                   {t}
                 </button>
@@ -178,7 +178,7 @@ export default function ChartPage() {
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold font-mono text-white">{fmt(lastCandle.close)}</span>
+          <span className="text-2xl font-bold font-mono text-content">{fmt(lastCandle.close)}</span>
           <span className={clsx('flex items-center gap-1 text-sm font-mono', bull ? 'text-bull' : 'text-bear')}>
             {bull ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
             {priceChange > 0 ? '+' : ''}{priceChange.toFixed(0)} ({pricePct.toFixed(2)}%)
@@ -189,8 +189,8 @@ export default function ChartPage() {
         <div className="flex gap-4 text-xs font-mono ml-auto">
           {[['O', lastCandle.open], ['H', lastCandle.high], ['L', lastCandle.low], ['V', (lastCandle.volume / 1_000_000).toFixed(1) + 'M']].map(([k, v]) => (
             <div key={k} className="text-center">
-              <p className="text-muted">{k}</p>
-              <p className={clsx('text-white', k === 'H' && 'text-bull', k === 'L' && 'text-bear')}>{typeof v === 'number' ? fmt(v) : v}</p>
+              <p className="text-content-muted">{k}</p>
+              <p className={clsx('text-content', k === 'H' && 'text-bull', k === 'L' && 'text-bear')}>{typeof v === 'number' ? fmt(v) : v}</p>
             </div>
           ))}
         </div>
@@ -199,7 +199,7 @@ export default function ChartPage() {
         <button
           onClick={() => inWatchlist ? removeFromWatchlist(selectedTicker) : addToWatchlist(selectedTicker)}
           className={clsx('flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-colors text-xs',
-            inWatchlist ? 'border-warning/30 text-warning bg-warning/10' : 'border-surface-border text-muted hover:border-white/30'
+            inWatchlist ? 'border-warning/30 text-warning bg-warning/10' : 'border-surface-border text-content-muted hover:border-white/30'
           )}
         >
           {inWatchlist ? <Star size={12} fill="currentColor" /> : <StarOff size={12} />}
@@ -209,14 +209,14 @@ export default function ChartPage() {
 
       {/* Timeframe */}
       <div className="flex items-center gap-2">
-        <span className="text-muted text-xs">Timeframe:</span>
+        <span className="text-content-muted text-xs">Timeframe:</span>
         <div className="flex gap-1">
           {timeframes.map(tf => (
             <button
               key={tf}
               onClick={() => setSelectedTimeframe(tf)}
               className={clsx('px-2.5 py-1 rounded-md text-xs font-mono transition-colors',
-                selectedTimeframe === tf ? 'bg-accent text-black font-bold' : 'text-muted hover:text-white hover:bg-surface-hover'
+                selectedTimeframe === tf ? 'bg-accent text-white font-bold' : 'text-content-muted hover:text-content hover:bg-surface-hover'
               )}
             >
               {tf}
@@ -224,7 +224,7 @@ export default function ChartPage() {
           ))}
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-muted text-xs">Indikator:</span>
+          <span className="text-content-muted text-xs">Indikator:</span>
           {indicators.map(ind => (
             <button
               key={ind}
@@ -232,7 +232,7 @@ export default function ChartPage() {
               className={clsx('px-2 py-1 rounded-md text-xs transition-colors border',
                 activeIndicators.includes(ind)
                   ? 'border-accent/30 text-accent bg-accent/10'
-                  : 'border-surface-border text-muted hover:border-white/30'
+                  : 'border-surface-border text-content-muted hover:border-white/30'
               )}
             >
               {ind}
@@ -245,8 +245,8 @@ export default function ChartPage() {
       <div className="card p-4">
         <ResponsiveContainer width="100%" height={300}>
           <ComposedChart data={candlesWithMA} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-            <XAxis dataKey="date" tickFormatter={v => v.slice(5)} tick={{ fill: '#8b949e', fontSize: 9 }} tickLine={false} axisLine={false} interval={6} />
-            <YAxis tick={{ fill: '#8b949e', fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={v => fmt(v)} domain={['auto', 'auto']} width={65} />
+            <XAxis dataKey="date" tickFormatter={v => v.slice(5)} tick={{ fill: '#64748B', fontSize: 9 }} tickLine={false} axisLine={false} interval={6} />
+            <YAxis tick={{ fill: '#64748B', fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={v => fmt(v)} domain={['auto', 'auto']} width={65} />
             <Tooltip content={<CustomCandleTooltip />} />
             {/* Volume */}
             <Bar dataKey="volume" fill="#21262d" yAxisId="vol" opacity={0.5} />
@@ -265,11 +265,11 @@ export default function ChartPage() {
         {/* RSI */}
         {activeIndicators.includes('RSI') && (
           <div className="card p-4">
-            <h3 className="text-xs text-muted mb-2 font-semibold">RSI (14)</h3>
+            <h3 className="text-xs text-content-muted mb-2 font-semibold">RSI (14)</h3>
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={rsiData} margin={{ top: 0, right: 5, left: -20, bottom: 0 }}>
                 <XAxis dataKey="date" hide />
-                <YAxis domain={[0, 100]} tick={{ fill: '#8b949e', fontSize: 9 }} tickLine={false} axisLine={false} ticks={[30, 50, 70]} />
+                <YAxis domain={[0, 100]} tick={{ fill: '#64748B', fontSize: 9 }} tickLine={false} axisLine={false} ticks={[30, 50, 70]} />
                 <Tooltip
                   content={({ active, payload }) =>
                     active && payload?.length ? (
@@ -294,11 +294,11 @@ export default function ChartPage() {
         {/* MACD */}
         {activeIndicators.includes('MACD') && (
           <div className="card p-4">
-            <h3 className="text-xs text-muted mb-2 font-semibold">MACD (12, 26, 9)</h3>
+            <h3 className="text-xs text-content-muted mb-2 font-semibold">MACD (12, 26, 9)</h3>
             <ResponsiveContainer width="100%" height={100}>
               <ComposedChart data={macdData} margin={{ top: 0, right: 5, left: -20, bottom: 0 }}>
                 <XAxis dataKey="date" hide />
-                <YAxis tick={{ fill: '#8b949e', fontSize: 9 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fill: '#64748B', fontSize: 9 }} tickLine={false} axisLine={false} />
                 <Tooltip
                   content={({ active, payload }) =>
                     active && payload?.length ? (

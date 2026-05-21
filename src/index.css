@@ -7,74 +7,82 @@
     @apply border-surface-border;
   }
   body {
-    @apply bg-surface text-white font-sans antialiased;
+    @apply bg-surface text-content font-sans antialiased;
     scrollbar-width: thin;
-    scrollbar-color: #21262d #0d1117;
+    scrollbar-color: #CBD5E1 #F8FAFC;
   }
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0d1117;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #30363d;
-    border-radius: 3px;
+    background: #CBD5E1;
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #484f58;
+    background: #94A3B8;
   }
 }
 
 @layer components {
+  /* Modern Soft Shadow for Cards */
   .card {
-    @apply bg-surface-card rounded-xl border border-surface-border;
+    @apply bg-surface-card rounded-xl border border-surface-border shadow-sm;
   }
+  
   .badge-bull {
-    @apply bg-bull/10 text-bull text-xs font-mono px-2 py-0.5 rounded-md;
+    @apply bg-bull/10 text-bull text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm border border-bull/20;
   }
   .badge-bear {
-    @apply bg-bear/10 text-bear text-xs font-mono px-2 py-0.5 rounded-md;
+    @apply bg-bear/10 text-bear text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm border border-bear/20;
   }
   .badge-neutral {
-    @apply bg-white/5 text-muted text-xs font-mono px-2 py-0.5 rounded-md;
+    @apply bg-surface-hover text-muted text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm border border-surface-border;
   }
+  
   .nav-item {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-hover transition-all duration-200 cursor-pointer text-sm font-medium;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-content-muted hover:text-content hover:bg-surface-hover transition-colors duration-150 cursor-pointer text-sm font-medium mx-2 my-0.5;
   }
   .nav-item.active {
-    @apply text-accent bg-accent/10;
+    @apply text-accent bg-accent/10 font-bold;
   }
+  
+  /* Desain input simpel bergaris tipis, indikator focus yang tajam */
   .btn-primary {
-    @apply bg-accent text-black font-semibold px-4 py-2 rounded-lg hover:bg-accent-hover transition-colors duration-200 text-sm;
+    @apply bg-accent text-white font-medium px-4 py-2 rounded-lg hover:bg-accent-hover transition-colors duration-150 text-sm border border-transparent shadow-sm;
   }
   .btn-ghost {
-    @apply bg-transparent text-muted border border-surface-border px-4 py-2 rounded-lg hover:text-white hover:border-white/30 transition-all duration-200 text-sm;
+    @apply bg-transparent text-content-muted border border-surface-border px-4 py-2 rounded-lg hover:text-content hover:bg-surface-hover transition-colors duration-150 text-sm;
   }
   .input-dark {
-    @apply bg-surface-hover border border-surface-border rounded-lg px-3 py-2 text-sm text-white placeholder-muted focus:outline-none focus:border-accent/50 transition-colors;
+    @apply bg-surface border border-surface-border rounded-lg px-3 py-2 text-sm text-content placeholder-content-muted focus:outline-none focus:border-accent focus:bg-surface-card transition-colors shadow-sm;
   }
+  
   .ticker-strip {
     @apply flex gap-8 animate-ticker whitespace-nowrap;
   }
+  
   .heatmap-cell {
-    @apply rounded-lg flex items-center justify-center text-xs font-bold transition-transform hover:scale-105 cursor-pointer;
+    @apply rounded-sm flex items-center justify-center text-xs font-medium transition-colors hover:border-white border border-transparent cursor-pointer;
   }
+  
   .stat-card {
-    @apply card p-5 flex flex-col gap-1 hover:border-accent/30 transition-colors duration-200;
+    @apply card p-5 flex flex-col gap-1 transition-colors duration-150 bg-surface hover:bg-surface-card;
   }
 }
 
-/* Glow effects */
+/* Hapus Efek Glow Generik (Neo-Minimalism focus) */
 .glow-bull {
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+  box-shadow: none;
 }
 .glow-bear {
-  box-shadow: 0 0 20px rgba(255, 77, 109, 0.15);
+  box-shadow: none;
 }
 .text-glow-accent {
-  text-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+  text-shadow: none;
 }
 
 /* Chart gradient fills */

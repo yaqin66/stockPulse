@@ -1,5 +1,7 @@
-import { Search, Bell, Clock } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Search, Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { getMarketStatus } from '../utils/marketCalendar'
 
 const pageTitle = {
   dashboard: 'Market Dashboard',
@@ -12,16 +14,38 @@ const pageTitle = {
 }
 
 export default function Topbar() {
-  const { activePage, notifications } = useStore()
-  const now = new Date('2026-05-03T09:31:00')
-  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  const { activePage } = useStore()
+  const [now, setNow] = useState(new Date())
+
+  // Live clock — update setiap detik
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Format waktu & tanggal dalam zona WIB
+  const timeStr = now.toLocaleTimeString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  const dateStr = now.toLocaleDateString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
+  // Status pasar berdasarkan hari, jam, dan hari libur nasional
+  const marketStatus = getMarketStatus(now)
 
   return (
     <header className="h-14 bg-surface-card border-b border-surface-border flex items-center justify-between px-6 flex-shrink-0">
       <div className="flex items-center gap-4">
-        <h1 className="text-white font-semibold text-lg">{pageTitle[activePage]}</h1>
-        <div className="flex items-center gap-1.5 text-muted text-xs font-mono">
+        <h1 className="text-content font-semibold text-lg">{pageTitle[activePage]}</h1>
+        <div className="flex items-center gap-1.5 text-content-muted text-xs font-mono">
           <Clock size={12} />
           <span>{timeStr}</span>
           <span className="text-surface-border">|</span>
@@ -32,7 +56,7 @@ export default function Topbar() {
       <div className="flex items-center gap-3">
         {/* Search */}
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
           <input
             type="text"
             placeholder="Cari saham... (e.g. BBCA)"
@@ -40,21 +64,26 @@ export default function Topbar() {
           />
         </div>
 
-        {/* Market status */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bull/10 border border-bull/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-bull animate-pulse-slow"></span>
-          <span className="text-bull text-xs font-medium">Pasar Terbuka</span>
-        </div>
-
-        {/* Notifications */}
-        <button className="relative text-muted hover:text-white transition-colors">
-          <Bell size={18} />
-          {notifications.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-bear text-white text-[10px] rounded-full flex items-center justify-center">
-              {notifications.length}
+        {/* Market status — dinamis berdasarkan hari & jam */}
+        {marketStatus.open ? (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bull/10 border border-bull/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-bull animate-pulse-slow" />
+            <span className="text-bull text-xs font-medium">Pasar Terbuka</span>
+          </div>
+        ) : (
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-content-muted/10 border border-surface-border"
+            title={marketStatus.reason}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-content-muted" />
+            <span className="text-content-muted text-xs font-medium">
+              Pasar Tutup
+              {marketStatus.reason ? ` · ${marketStatus.reason}` : ''}
             </span>
-          )}
-        </button>
+          </div>
+        )}
+
+
       </div>
     </header>
   )
