@@ -1,6 +1,41 @@
 import { create } from 'zustand'
 import { watchlistStocks } from '../data/mockData'
 
+// Load persisted settings from localStorage
+const loadSettings = () => {
+  try {
+    const saved = localStorage.getItem('stockpulse_settings')
+    return saved ? JSON.parse(saved) : {}
+  } catch { return {} }
+}
+
+const persistSettings = (settings) => {
+  try { localStorage.setItem('stockpulse_settings', JSON.stringify(settings)) } catch {}
+}
+
+const defaultSettings = {
+  // Tampilan
+  theme: 'light',            // 'light' | 'dark'
+  compactMode: false,
+  showTickerStrip: true,
+  animationsEnabled: true,
+
+  // Notifikasi
+  notifPrice: true,
+  notifDividen: true,
+  notifSignal: true,
+  notifSound: false,
+
+  // Trading
+  defaultTicker: 'BBCA',
+  defaultTimeframe: '1D',
+  currency: 'IDR',
+
+  // Profil
+  displayName: 'Yaqin',
+  role: 'Pro Trader',
+}
+
 export const useStore = create((set) => ({
   // Navigation
   activePage: 'dashboard',
@@ -53,4 +88,21 @@ export const useStore = create((set) => ({
     { id: 2, type: 'event', msg: 'BBCA Cum Date Dividen — 15 Mei 2026', time: '08:00' },
     { id: 3, type: 'signal', msg: 'ASII: Golden Cross MA20 > MA50', time: '07:30' },
   ],
+
+  // Settings modal
+  settingsOpen: false,
+  openSettings: () => set({ settingsOpen: true }),
+  closeSettings: () => set({ settingsOpen: false }),
+
+  // Settings state (merged with localStorage)
+  settings: { ...defaultSettings, ...loadSettings() },
+  updateSettings: (patch) => set((s) => {
+    const next = { ...s.settings, ...patch }
+    persistSettings(next)
+    return { settings: next }
+  }),
+  resetSettings: () => set(() => {
+    persistSettings(defaultSettings)
+    return { settings: { ...defaultSettings } }
+  }),
 }))

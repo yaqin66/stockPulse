@@ -1,23 +1,22 @@
 import { 
   LayoutDashboard, LineChart, Search, FileBarChart2, Star,
-  Bell, Settings, ChevronLeft, ChevronRight, TrendingUp,
-  Megaphone, BarChart2
+  Settings, ChevronLeft, ChevronRight, TrendingUp,
+  Megaphone, BarChart2, DollarSign, Calculator, Newspaper
 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import clsx from 'clsx'
 
 const navItems = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'Market Dashboard' },
-  { id: 'chart', icon: LineChart, label: 'Advanced Chart' },
-  { id: 'screener', icon: Search, label: 'Stock Screener' },
   { id: 'fundamental', icon: FileBarChart2, label: 'Data Fundamental' },
-  { id: 'watchlist', icon: Star, label: 'Watchlist' },
+  { id: 'news', icon: Newspaper, label: 'AI News Analysis' },
+  { id: 'calculator', icon: Calculator, label: 'Kalkulator Saham' },
   { id: 'announcement', icon: Megaphone, label: 'Pengumuman' },
   { id: 'trading', icon: BarChart2, label: 'Info Trading IDX' },
 ]
 
 export default function Sidebar() {
-  const { activePage, setActivePage, sidebarCollapsed, toggleSidebar } = useStore()
+  const { activePage, setActivePage, sidebarCollapsed, toggleSidebar, openSettings, settings } = useStore()
 
   return (
     <aside className={clsx(
@@ -29,20 +28,20 @@ export default function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <TrendingUp size={16} className="text-black" />
+              <TrendingUp size={16} className="text-content" />
             </div>
-            <span className="font-bold text-white text-lg tracking-tight">StockPulse</span>
+            <span className="font-bold text-content text-lg tracking-tight">StockPulse</span>
           </div>
         )}
         {sidebarCollapsed && (
           <div className="mx-auto w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-            <TrendingUp size={16} className="text-black" />
+            <TrendingUp size={16} className="text-content" />
           </div>
         )}
         {!sidebarCollapsed && (
           <button
             onClick={toggleSidebar}
-            className="text-muted hover:text-white transition-colors"
+            className="text-content-muted hover:text-content transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
@@ -53,7 +52,7 @@ export default function Sidebar() {
       {sidebarCollapsed && (
         <button
           onClick={toggleSidebar}
-          className="mx-auto mt-2 text-muted hover:text-white transition-colors p-1"
+          className="mx-auto mt-2 text-content-muted hover:text-content transition-colors p-1"
         >
           <ChevronRight size={18} />
         </button>
@@ -80,20 +79,10 @@ export default function Sidebar() {
 
       {/* Bottom */}
       <div className="px-2 py-4 border-t border-surface-border space-y-1">
+
         <button
-          className={clsx(
-            'nav-item w-full',
-            sidebarCollapsed && 'justify-center px-0'
-          )}
-          title={sidebarCollapsed ? 'Notifikasi' : undefined}
-        >
-          <Bell size={18} />
-          {!sidebarCollapsed && <span>Notifikasi</span>}
-          {!sidebarCollapsed && (
-            <span className="ml-auto bg-bear text-white text-xs px-1.5 py-0.5 rounded-full">3</span>
-          )}
-        </button>
-        <button
+          onClick={openSettings}
+          id="sidebar-settings-btn"
           className={clsx(
             'nav-item w-full',
             sidebarCollapsed && 'justify-center px-0'
@@ -110,11 +99,11 @@ export default function Sidebar() {
         <div className="px-4 py-3 border-t border-surface-border">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">
-              Y
+              {settings?.displayName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">Yaqin</p>
-              <p className="text-xs text-muted truncate">Pro Trader</p>
+              <p className="text-sm font-medium text-content truncate">{settings?.displayName || 'User'}</p>
+              <p className="text-xs text-content-muted truncate">{settings?.role || 'Trader'}</p>
             </div>
           </div>
         </div>

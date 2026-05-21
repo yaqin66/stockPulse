@@ -18,10 +18,10 @@ export default function TickerStrip() {
         <div className="ticker-strip py-2 px-4">
           {[...tickers, ...tickers].map((t, i) => (
             <div key={i} className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-              <span className={`text-xs font-mono font-semibold ${t.type === 'index' ? 'text-accent' : 'text-white'}`}>
+              <span className={`text-xs font-mono font-semibold ${t.type === 'index' ? 'text-accent' : 'text-content'}`}>
                 {t.label}
               </span>
-              <span className="text-xs font-mono text-white">{fmt(t.price)}</span>
+              <span className="text-xs font-mono text-content">{fmt(t.price)}</span>
               <span className={`flex items-center gap-0.5 text-xs font-mono ${t.pct >= 0 ? 'text-bull' : 'text-bear'}`}>
                 {t.pct >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                 {fmtPct(t.pct)}

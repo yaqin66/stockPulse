@@ -8,24 +8,28 @@ export default {
     extend: {
       colors: {
         surface: {
-          DEFAULT: '#0d1117',
-          card: '#161b22',
-          hover: '#1c2128',
-          border: '#21262d',
+          DEFAULT: '#F8FAFC',
+          card: '#FFFFFF',
+          hover: '#F1F5F9',
+          border: '#E2E8F0',
         },
         accent: {
-          DEFAULT: '#00d4aa',
-          muted: '#00d4aa33',
-          hover: '#00bfff',
+          DEFAULT: '#3B82F6', // Modern bright blue for primary accent
+          muted: '#3B82F633',
+          hover: '#2563EB',
         },
-        bull: '#00d4aa',
-        bear: '#ff4d6d',
-        warning: '#f7b731',
-        muted: '#8b949e',
+        bull: '#10B981', // Keep emerald for positive
+        bear: '#EF4444', // Keep red for negative
+        warning: '#F59E0B',
+        muted: '#64748b',
+        content: {
+          DEFAULT: '#0F172A',
+          muted: '#64748B',
+        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        mono: ['Roboto Mono', 'JetBrains Mono', 'monospace'],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

@@ -32,3 +32,28 @@ export async function getTradingHistory(ticker, { start = 0, length = 100 } = {}
 export async function getStockChart(ticker, period = '1Y') {
   return fetchJSON(`${BASE}/chart/${ticker}/${period}`)
 }
+
+// ── Market Dashboard ───────────────────────────────────────────────────────────
+export async function getMarketSummary() {
+  return fetchJSON(`${BASE}/market-summary`)
+}
+
+// ── Screener ───────────────────────────────────────────────────────────────────
+export async function getScreener() {
+  return fetchJSON(`${BASE}/screener`)
+}
+
+// ── YF Price ───────────────────────────────────────────────────────────────────
+export async function getYfPrice(ticker) {
+  return fetchJSON(`${BASE}/yf-price/${ticker}`)
+}
+
+// ── Fundamental Data (YFinance via Port 3002) ──────────────────────────────
+export async function getFundamentalData(ticker) {
+  return fetchJSON(`/api-yf/fundamental/${ticker}`)
+}
+
+// Ambil berita & sentimen dari YFinance Microservice
+export async function getNewsData(ticker) {
+  return fetchJSON(`/api-yf/news/${ticker}`)
+}
